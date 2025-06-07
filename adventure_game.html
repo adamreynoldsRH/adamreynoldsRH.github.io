@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Echoes of Destiny</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="height:240px"></div>
+    <img id="scene" src="welcome.png" style="width:75%;max-width:500px;display:block;margin:0 auto">
+    <script>
+
+        // some global variables 
+        let hasKey = false;
+        let hasPearl = false;
+        let riddleAnswer = "";
+
+        function goToLocation(image, locationFunction) {
+            document.getElementById('scene').src = image + '.png';
+            setTimeout(locationFunction, 2500);
+        }
+
+        function startGame() {
+            // reset global variables in case the player plays again
+            let hasKey = false;
+            let hasPearl = false;
+            let riddleAnswer = "";
+
+            let name = prompt("Welcome, adventurer! What is your name?") || "Stranger";
+            alert("Let us begin, " + name + "!")
+            goToLocation('forest', enchantedForest);
+        }
+
+        function endGame() {
+            alert("Thanks for playing!");
+        }
+
+        function replayGame() {
+            let choice = prompt(
+                "Play again?\n\n" +
+                "1. Yes\n" +
+                "2. No"
+            );
+
+            if (choice === "1") {
+                goToLocation('welcome', startGame);
+            } else {
+                goToLocation('end-game', endGame)
+            }
+        }
+
+        function enchantedForest() {
+            alert("You find yourself in the Enchanted Forest.");
+            alert("It's dark and cool, and your skin tingles with a sense of adventure.");
+            goToLocation('map', travelMap);
+        }
+
+        function travelMap() {
+
+            let choice = prompt(
+                "Where would you like to go?\n\n" +
+                "1. Sea of Destiny\n" +
+                "2. Foreboding Mountain\n" +
+                "3. Moors of Despair\n" +
+                "4. Enchanted Forest"
+            );
+
+            if (choice === "2") {
+                alert("You venture towards the Foreboding Mountain...");
+                goToLocation('mountain', forebodingMountain);
+            } else if (choice === "3") {
+                alert("You journey to the Moors of Despair...");
+                goToLocation('moor', moorsOfDespair);
+            } else if (choice === "1") {
+                goToLocation('sea', seaOfDestiny);
+            } else {
+                alert("Invalid choice! Please try again.");
+                enchantedForest();
+            }
+        }
+
+        function forebodingMountain() {
+
+            alert("The Foreboding Mountain looms ahead of you... forebodingly.");
+
+            let mountainChoice = prompt(
+                "What would you like to do?\n\n" +
+                "1. Go back to the Enchanted Forest.\n" +
+                "2. Run towards the warmth and light you see ahead.\n" +
+                "3. Pause to inspect some ancient carvings."
+            );
+
+            if (mountainChoice === "1") {
+                alert("You head back the way you came...");
+                goToLocation('forest', enchantedForest);
+
+            } else if (mountainChoice === "2") {
+                alert("🌋 You slip and fall into a volcano.");
+                alert("💀 Game Over!");
+                goToLocation('volcano', replayGame);
+
+            } else if (mountainChoice === "3") {
+                alert("You move closer to the carvings...");
+                goToLocation('riddle', mountainRiddle);
+
+            } else {
+                alert("Invalid choice! Try again.");
+                forebodingMountain();
+            }
+        }
+
+        function mountainRiddle() {
+            riddleAnswer = prompt("What is the answer to the riddle?").toLowerCase();
+
+            if (riddleAnswer.includes("mountain")) {
+                alert("The riddle disappears and is replaced by a glowing image of a mystical being holding what looks like a shining orb.");
+                goToLocation('oracle-carving', riddleCorrect)
+            } else {
+                alert("Nothing happens…");
+                choice = prompt("Guess again? Y or N").toLowerCase();
+                if (choice === "y") {
+                    alert("You stare hard at the carvings again, looking for any clue that might help.");
+                    mountainRiddle();
+                } else {
+                    alert("You give up for now, and turn away from carvings.");
+                    goToLocation('mountain', forebodingMountain);
+                }
+            }
+        }
+
+        function riddleCorrect() {
+            alert("You become aware of something hard in your pocket that wasn't there before...")
+            alert("It's a... pearl? You shrug and move away from the carvings.")
+            hasPearl = true;
+            goToLocation('mountain', forebodingMountain);
+        }
+
+        function moorsOfDespair() {
+            alert("The mist swirls around you ominously...");
+
+            goToLocation('chest', moorsOfDespair2);
+        }
+
+        function moorsOfDespair2() {
+            alert("You find a hidden chest...");
+
+            let moorChoice = prompt(
+                "What would you like to do?\n\n" +
+                "1. Open it.\n" +
+                "2. Go back to the Enchanted Forest to look for a key."
+            );
+
+            if (moorChoice === "1") {
+                if (hasKey) {
+                    alert("The key turns in lock and the chest creaks as you open it...")
+                    alert("You found the Elixir of Life!");
+                    alert("You win!");
+                    goToLocation('elixir', replayGame);
+                } else {
+                    alert("It's locked tight – you need a key!");
+                    goToLocation('map', travelMap);
+                }
+            } else if (moorChoice === "2") {
+                goToLocation('forest', enchantedForest);
+            } else {
+                alert("Invalid choice! Try again.");
+                moorsOfDespair2();
+            }
+        }
+
+        function seaOfDestiny() {
+            alert("You travel to the Sea of Destiny...");
+            alert("Waves crash against distant cliffs...");
+
+            goToLocation('oracle', seaOfDestiny2);
+        }
+
+        function seaOfDestiny2() {
+
+            alert("You find the Oracle.");
+
+            if (hasPearl) {
+                let seaChoice = prompt(
+                    "What would you offer the Oracle?"
+                );
+
+                if (seaChoice === "pearl") {
+                    alert("The Oracle smiles, and slips you an old key.");
+                    hasKey = true;
+                } else {
+                    alert("The Oracle shakes her head.");
+                }
+            }
+
+            else {
+                alert("She is still and does not acknowledge your prescence.");
+            }
+
+            goToLocation('map', travelMap)
+        }
+
+        // Start the game when the page loads
+        window.onload = goToLocation('welcome', startGame);
+    </script>
+</body>
+
+</html>
